@@ -1,0 +1,12 @@
+jieba==0.42.1
+nlpaug==1.1.11
+nltk==3.9.1
+numpy==2.3.2
+openai==1.102.0
+pandas==2.3.2
+PyYAML==6.0.2
+requests==2.27.1
+scikit_learn==1.7.1
+torch==2.8.0
+tqdm==4.67.1
+transformers==4.56.0

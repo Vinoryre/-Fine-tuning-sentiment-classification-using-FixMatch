@@ -1,0 +1,30 @@
+# ========
+# Supervised 超参数与配置
+# ========
+
+dataset:
+  labeled_path: "hot_word/Dataset/F1_data/labeled"
+  dev_path: "hot_word/Dataset/F1_data/Dev"
+  max_len: 128
+  test_ratio: 0.15
+
+training:
+  epoch: 50
+  batch_l: 64
+  batch_d: 64
+  lr: 1e-2
+  optimizer_type: "adamw" # adamw/sgd
+  nesterov: true # sgd
+  momentum: 0.9
+  weight_decay: 1e-2
+  scheduler: "cosine"
+  use_amp: true
+
+model:
+  model_path: "model_test/chinese_roberta_wwm_ext"
+  best_model_path: "hot_word/Model/checkpoints/F1_full_supervision/supervised_model.pt"
+  num_labels: 3
+
+logging:
+  log_dir: "hot_word/logs/runs"
+  save_mistakes_path: "hot_word/logs/mistake_samples"

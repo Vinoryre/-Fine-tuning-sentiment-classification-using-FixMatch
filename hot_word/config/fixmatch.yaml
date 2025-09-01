@@ -1,0 +1,65 @@
+# ========
+# FixMatch 超参数与路径配置
+# ========
+
+# 数据路径
+dataset:
+  labeled_path: "hot_word/Dataset/P1_data/labeled"
+  unlabeled_path: "hot_word/Dataset/P1_data/unlabeled"
+  dev_path: "hot_word/Dataset/P1_data/Dev"
+  max_len: 128
+  test_ratio: 0.15
+  n_samples_per_class: [8, 4, 1]
+  boost_dict:
+    0: 2.0
+    1: 1.5
+    2: 1.0
+  psedulabel_weights:
+    0: 1.2
+    1: 1.2
+    2: 1.0
+
+# 训练参数
+training:
+  epochs: 50
+  warmup_epochs: 5
+  batch_l: 64
+  batch_u: 448
+  lr: 1e-2
+  optimizer: "adamw"  # 优化器，后续可用SGD配向量
+  nesterov: true
+  momentum: 0.9  # SGD专用
+  weight_decay: 0.01
+  scheduler: "cosine"  # cosine / step / none
+  use_amp: true
+  ema_decay: 0.999
+  lambda_u: 1.0
+  threshold: 0.95
+  sample_log_freq: 500
+  collapse_threshold: 0.99
+  # 类自适应阈值
+  thresholds:
+    0: 0.80
+    1: 0.80
+    2: 0.99
+  # 每个类别的强增强幅度
+  strong_aug_ratio:
+    0: 0.10
+    1: 0.10
+    2: 0.20
+  # 类配额中性标签最大占比
+  neutral_max_ratio: 0.7
+  pos_id: 0
+  neg_id: 1
+  neutral_id: 2
+
+# 模型参数
+model:
+  model_path: "model_test/chinese_roberta_wwm_ext"
+  best_model_dir: "hot_word/Model/checkpoints/P1_FixMatch"
+  num_labels: 3
+
+# 日志
+logging:
+  log_dir: "hot_word/logs/runs"
+  save_mistakes_path: "hot_word/logs/mistake_samples"
