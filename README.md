@@ -169,7 +169,7 @@ This combination helps the model benefit from both reliable supervision and the 
 The downstream task is a **three-class sentiment classification** problem: **positive, negative, neutral**.
 
 - **Training data distribution**: approximately `positive : negative : neutral = 2 : 2 : 1`.
-- **Dev validation set**: constructed with a **real-world distribution**, where `neutral > negative > positive` (approx. 160: 65 : 10).
+- **Dev validation set**: constructed with a **real-world distribution**, where `neutral > negative > positive` (approx. 160:65:10).
 - This skewed distribution reflects the domain characteristics (collected and weakly labeled by AI).
 
 **Goal:**
@@ -178,19 +178,50 @@ The downstream task is a **three-class sentiment classification** problem: **pos
 
 ## Step 4: Results and Analysis
 
-> *To be updated once experimental results are available.*
+### Raw Results (Terminal Output)
 
-These section will summarize the outcomes of the training experiments, including:
+![](logs/plots/result.png)
 
-- Metrics and performance comparisons between FixMatch and Full Supervision.
-- Observations on the model's strengths and weaknesses.
-- Analysis of generalization behavior and challenges faced with domain-specific data.
-- Limitations and potential areas for improvement.
+### Analysis
+- The first confusion matrix was obtained using data with a **2:2:1 ratio of positive, negative, and neutral samples**, with **15% held out as the test set**.
+- During training, I applied **weighted cross-entropy** to strengthen the model's ability to 
+- The second confusion matrix, however, was generated on the **real distribution data**. In this case, the model tends to predict most samples as neutral.
+- If the model predicts the majority as neutral, the overall accuracy will naturally appear higher - but this is not desirable, since it means positive and negative classed are not being properly recognized.
+- On the other hand, when the model actively attempts to identify positive and negative classes, more misclassifications into neutral occur. This lowers the overall accuracy, but increases recall for positive and negative classes.
+- From my experiments, this trade-off produced what I currently consider the **best achievable result** with my dataset and method.
+
+### Limitations
+
+- The evaluation metrics differ significantly from standard test benchmarks, and the performance is still not satisfactory.
+- I believe the main issue lies in the **dataset construction**: the training samples were labeled by AI models, selecting only those where models agreed on the same label.
+- While this yields strongly labeled samples, when generalized to real-world data, the samples become more ambiguous. This ambiguity appears to be a fundamental challenge for the model, and I have not yet found a solution to overcome it.
+- Another crucial limitation comes from the **augmentation strategy**. The corpus comes from the gaming domain, but the weak and strong augmentation functions I used were quite simplistic:
+  - **Weak augmentation**: if the sentence length > 10, randomly delete one character.
+  - **Strong augmentation**: randomly mask *x%* of characters, where *x* was set to 20% for neutral pseudo-labels and 10% for positive/negative.
+- Since augmentation is the very **core of FixMatch**, my current design may not fully capture domain-specific semantics, and the lack of optimization here is likely a major factor behind the model's limited performance.
 
 ## Step 5: Other Scripts
 
 The project also contains additional utility scripts that support training and evaluation:
 
+- `hot_word/script/`:
+  Contains miscellaneous data processing scripts. These are mainly for internal use and may not be broadly useful to others.
+ 
+- `hot_word/utils/AI_annotation_script.py`:
+  An automatic data annotation script that requires an API key. It can be used to label raw text samples with external AI models.
+ 
+- `hot_word/utils/Grid_search.py` + `config_loader.py`:
+  A grid search utility for hyperparameter tuning. You need to prepare your own YAML configuration files. Interested users can check the source code for usage details.
+  
+These scripts are optional but may be useful if you want to explore automated labeling or hyperparameter search.
 
-> These scripts are optional but may be useful for customizing training, analyzing results, or extending the project to other datasets or tasks.
+---
+
+## Closing Remarks
+
+This project mainly serves as a demonstration of an idea and method for combining semi-supervised learning with downstream fine-tuning.
+From my experiments, the results are far from ideal - at least in this example, the performance is not satisfactory.
+However, I still believe that the approach has value and could be useful in practice.
+
+If any part of this work helps you in your own experiments, I would be truly grateful.
 
